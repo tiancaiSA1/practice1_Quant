@@ -1,0 +1,93 @@
+trainNum = 300
+testNum = 50
+blank0 = 16700
+-----sym_1.csv-----
+-----xgboost regression-----
+training set prediction MSE = 6.2192306663
+testing set prediction MSE = 5.72042520786
+-----linear regression-----
+training set prediction MSE = 1.67482899376
+testing set prediction MSE = 17.1853278003
+
+testing set prediction MSE = 6.34573404473
+-----sym_10.csv-----
+-----xgboost regression-----
+training set prediction MSE = 3.15642914201
+testing set prediction MSE = 8.4092839032
+-----linear regression-----
+training set prediction MSE = 1.81545814229
+testing set prediction MSE = 26.5861751115
+
+testing set prediction MSE = 7.95764861063
+-----sym_100.csv-----
+-----xgboost regression-----
+training set prediction MSE = 4.35723722302
+testing set prediction MSE = 10.9819067539
+-----linear regression-----
+training set prediction MSE = 2.01177722934
+testing set prediction MSE = 20.9450468327
+
+testing set prediction MSE = 10.5629276737
+-----sym_11.csv-----
+-----xgboost regression-----
+training set prediction MSE = 5.03224392638
+testing set prediction MSE = 11.4626499843
+-----linear regression-----
+training set prediction MSE = 4.42790613837
+testing set prediction MSE = 17.391960171
+
+testing set prediction MSE = 12.7643704129
+-----sym_12.csv-----
+-----xgboost regression-----
+training set prediction MSE = 6.46086798329
+testing set prediction MSE = 7.13402712068
+-----linear regression-----
+training set prediction MSE = 2.42203819155
+testing set prediction MSE = 15.080063116
+
+testing set prediction MSE = 7.38820369551
+-----sym_13.csv-----
+-----xgboost regression-----
+training set prediction MSE = 2.51373650534
+testing set prediction MSE = 2.39367312189
+-----linear regression-----
+training set prediction MSE = 1.57405444164
+testing set prediction MSE = 19.1037987565
+
+testing set prediction MSE = 3.21996277345
+-----sym_14.csv-----
+-----xgboost regression-----
+training set prediction MSE = 3.32830205834
+testing set prediction MSE = 44.6351361386
+-----linear regression-----
+training set prediction MSE = 3.31484255809
+testing set prediction MSE = 53.4730169113
+
+testing set prediction MSE = 41.5977271098
+-----sym_15.csv-----
+-----xgboost regression-----
+training set prediction MSE = 4.76072066305
+testing set prediction MSE = 8.59759489944
+-----linear regression-----
+training set prediction MSE = 2.53281386065
+testing set prediction MSE = 14.8955587338
+
+testing set prediction MSE = 8.12971470756
+-----sym_16.csv-----
+-----xgboost regression-----
+training set prediction MSE = 3.78243115598
+testing set prediction MSE = 7.12508799836
+-----linear regression-----
+training set prediction MSE = 3.27158820773
+testing set prediction MSE = 13.9769824798
+
+testing set prediction MSE = 6.66891656255
+-----sym_17.csv-----
+-----xgboost regression-----
+training set prediction MSE = 0.753510324857
+testing set prediction MSE = 3.11522476602
+-----linear regression-----
+training set prediction MSE = 2.17206159872
+testing set prediction MSE = 7.49486652884
+
+testing set prediction MSE = 3.56555406063
