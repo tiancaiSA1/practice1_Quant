@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb  2 03:28:04 2017
+Created on Fri Feb 17 17:56:46 2017
 
 @author: yinboya
 """
@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.model_selection import KFold
 import GenDataSet
 import os
-
+import xgboost as xgb
 
 I = 2
 '''
@@ -30,16 +30,29 @@ classMinThreshold = -0.001
 
 regFD = 1000 # regFD is an index to enlarge the dependent variable for regression
 
-
-trainNum = 300 # train set number
+trainNum = 8000 # train set number
 testNum = 50 # test set number
 blank0 = 16700
+
+'''
+    This version add parameters
+'''
+window = 300 # length of window
+N_validation = 3 # rolling windows test number when GA evaluation
+MUTPB_tN = 0.5 # the probablity of training set number
+
+
+
+
+
+
+
 '''
 train set = dataset[range(trainNum)+blank,:]
 test set = dataset[range(trainNum)+blank+trainNum,:]
 '''
 
-filepath = '/Users/yinboya/STUDY/QuantitativeInvestment/practice/outdata/'
+filepath = '/Users/yinboya/STUDY/QuantitativeInvestment/practice1/outdata/'
 list_name = os.listdir(filepath)
 
 name = "sym_1.csv"
@@ -171,6 +184,9 @@ def xgb_n_estimators(MAXne = 700, MINne = 20):
     else:
         return(random.randint(101,MAXne))
 
+def trainsetNum(MAXnm = 5000, MINnm = 200):
+    return(random.randint(MINnm, MAXnm))
+
 # register xgb parameters
 toolbox.register("attr_xgb_eta", xgb_eta)
 toolbox.register("attr_xgb_MinChildWeight", xgb_MinChildWeight)
@@ -178,6 +194,7 @@ toolbox.register("attr_xgb_maxdepth", xgb_maxdepth)
 toolbox.register("attr_xgb_subsample", xgb_subsample)
 toolbox.register("attr_xgb_colsample", xgb_colsample)
 toolbox.register("attr_xgb_n_estimators", xgb_n_estimators)
+toolbox.register("attr_trainsetNum",trainsetNum)
 
 
 """
@@ -222,9 +239,14 @@ alpha –> reg_alpha
 
 # Structure initializers
 toolbox.register("individual", tools.initCycle, creator.Individual,
-                 (toolbox.attr_xgb_eta,toolbox.attr_xgb_MinChildWeight,
-                  toolbox.attr_xgb_maxdepth,toolbox.attr_xgb_subsample,
-                  toolbox.attr_xgb_colsample,toolbox.attr_xgb_n_estimators), 1)
+                 (toolbox.attr_xgb_eta,
+                  toolbox.attr_xgb_MinChildWeight,
+                  toolbox.attr_xgb_maxdepth,
+                  toolbox.attr_xgb_subsample,
+                  toolbox.attr_xgb_colsample,
+                  toolbox.attr_xgb_n_estimators,
+                  toolbox.attr_trainsetNum), 1)
+
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 # The Evaluation Function
@@ -256,21 +278,52 @@ def XGB_class_evaluation(individual):
     correct = map(lambda x : x / N_SPLITS, [M_pos, M_mid, M_neg])
     return(tuple(correct))
 
-def XGB_reg_evaluation(individual):
-    N_SPLITS = N_splits
-    kf = KFold(n_splits = N_SPLITS)
-    cv_mseValue = 0
-    fc = XGBRegressor(learning_rate = individual[0], n_estimators = individual[5],
-                       silent = True, objective = "reg:linear",
-                       nthread = -1, gamma = 0,
-                       min_child_weight = individual[1],max_depth = individual[2],
-                       subsample = individual[3],colsample_bylevel = individual[4],
-                       seed = 0)
-    for train, test in kf.split(trainX):
-        fc.fit(trainX[train,:], trainY[train])
-        cv_mseValue += sum((trainY[test] - fc.predict(trainX[test,:])) ** 2) / len(test)
-    cv_mseValue = cv_mseValue / N_SPLITS
-    return(cv_mseValue,)
+def XGB_reg_evaluation(individual, evaluation_method = 'roll_win'):
+    '''
+    evaluation_method : can be roll_win, mse
+    '''
+    
+    if evaluation_method == 'roll_win':
+        trainNumber = individual[6] # the train num
+        param = {'eta' : individual[0],
+                 'silent' : True, 'objective' : "reg:linear", 'nthread' : -1,
+                 'min_child_weight' : individual[1],'max_depth' : individual[2],
+                 'subsample' : individual[3], 'colsample_bylevel' : individual[4],
+                 'seed' : 0}
+        roll_win_mseValue = 0
+        for i in xrange(N_validation):
+            trainingX, trainingY = trainX[(trainNum - (i + 1) * window - trainNumber):(trainNum - (i + 1) * window),:],\
+                                          trainY[(trainNum - (i + 1) * window - trainNumber):(trainNum - (i + 1) * window)]
+                                          
+            testingX, testingY= trainX[(trainNum - (i + 1) * window):(trainNum - i * window),:], \
+                                       trainY[(trainNum - (i + 1) * window):(trainNum - i * window)]
+            dtrain = xgb.DMatrix(data= trainingX, label = trainingY)
+            bst = xgb.train(params = param, dtrain = dtrain, num_boost_round = individual[5])
+            testingX = xgb.DMatrix(testingX)
+            roll_win_mseValue += sum((testingY - bst.predict(testingX)) ** 2) / window
+        roll_win_mseValue /= N_validation
+        return(roll_win_mseValue,)
+    
+    
+    if evaluation_method == 'mse':
+        ### The cross validation evaluation
+        N_SPLITS = N_splits
+        kf = KFold(n_splits = N_SPLITS)
+        cv_mseValue = 0
+        fc = XGBRegressor(learning_rate = individual[0], n_estimators = individual[5],
+                           silent = True, objective = "reg:linear",
+                           nthread = -1, gamma = 0,
+                           min_child_weight = individual[1],max_depth = individual[2],
+                           subsample = individual[3],colsample_bylevel = individual[4],
+                           seed = 0)
+        for train, test in kf.split(trainX):
+            fc.fit(trainX[train,:], trainY[train])
+            cv_mseValue += sum((trainY[test] - fc.predict(trainX[test,:])) ** 2) / len(test)
+        cv_mseValue = cv_mseValue / N_SPLITS
+        return(cv_mseValue,)
+    
+    print "There is no evaluation method for %s" % evaluation_method
+    raise Exception("evaluation_method is not valid")
 
 # The mutate Function
 def xgb_mutation(individual):
@@ -291,6 +344,10 @@ def xgb_n_estimators_mutation(individual, plus_d = 30, minus_d = 30):
     individual[5] = random.randint(individual[5]- minus_d, individual[5] + plus_d)
     return(individual)
 
+def xgb_trainsetNum_mutation(individual):
+    individual[6] = toolbox.attr_trainsetNum()
+    return(individual)
+
 def checkbound_ne(MAX = 1000, MIN = 20):
     def decorator(func):
         def wrapper(*args, **kargs):
@@ -308,6 +365,7 @@ toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", xgb_mutation)
 toolbox.register("mutate_ne", xgb_n_estimators_mutation)
 toolbox.register("select", tools.selTournament, tournsize = 3)
+toolbox.register("mutate_tNum", xgb_trainsetNum_mutation)
 toolbox.decorate("mutate_ne", checkbound_ne())
 if I == 1:
     toolbox.register("evaluate", XGB_class_evaluation)
@@ -365,7 +423,7 @@ if I == 1:
         return(tools.selBest(offspring,1))
             
 else:
-    toolbox.register("evaluate", XGB_reg_evaluation)
+    toolbox.register("evaluate", XGB_reg_evaluation, evaluation_method = "roll_win")
     def main(NGEN = iter_NGEN, CXPB = iter_CXPB, MUTPB = iter_MUTPB):
         # Creating the Population
         pop = toolbox.population(n=popNum)
@@ -386,7 +444,8 @@ else:
                     toolbox.mate(child1, child2)
                     del child1.fitness.values
                     del child2.fitness.values
-    
+            
+            
             for mutant in offspring:
                 if random.random() < MUTPB:
                     toolbox.mutate(mutant)
@@ -397,6 +456,8 @@ else:
                         del mutant.fitness.values
                     except Exception:
                         print("no fitness.values")
+                if random.random() < MUTPB_tN:
+                    toolbox.mutate_tNum(mutant)
             # Evaluate the individuals with an invalid fitness
             invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
             fitnesses = map(toolbox.evaluate, invalid_ind)
