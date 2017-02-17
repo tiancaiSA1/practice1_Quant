@@ -15,6 +15,7 @@ import numpy as np
 I = GAxgboost.I
 classMaxThreshold = GAxgboost.classMaxThreshold
 classMinThreshold = GAxgboost.classMinThreshold
+
 trainNum = GAxgboost.trainNum # train set number
 testNum = GAxgboost.testNum #test set number
 regFD = GAxgboost.regFD
@@ -22,6 +23,7 @@ blank0 = GAxgboost.blank0
 
 filepath = GAxgboost.filepath
 file_output = open("Comp_xgb.txt",'w')
+
 file_output.write("trainNum = %s\n" % trainNum)
 file_output.write("testNum = %s\n" % testNum)
 file_output.write("blank0 = %s\n" % blank0)

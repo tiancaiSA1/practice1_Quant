@@ -30,6 +30,7 @@ classMinThreshold = -0.001
 
 regFD = 1000 # regFD is an index to enlarge the dependent variable for regression
 
+
 trainNum = 300 # train set number
 testNum = 50 # test set number
 blank0 = 16700
