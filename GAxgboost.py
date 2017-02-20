@@ -30,9 +30,9 @@ classMinThreshold = -0.001
 
 regFD = 1000 # regFD is an index to enlarge the dependent variable for regression
 
-trainNum = 8000 # train set number
-testNum = 50 # test set number
-blank0 = 16700
+trainNum = 15000 # train set number
+testNum = 200 # test set number
+blank0 = 10000
 
 '''
     This version add parameters
@@ -40,9 +40,9 @@ blank0 = 16700
 window = 300 # length of window
 N_validation = 3 # rolling windows test number when GA evaluation
 MUTPB_tN = 0.5 # the probablity of training set number
+eva_method = 'roll_win' # evaluation_method : can be roll_win, mse
 
-
-
+using_gpu = 0 # do you use gpu to train the model
 
 
 
@@ -51,7 +51,6 @@ MUTPB_tN = 0.5 # the probablity of training set number
 train set = dataset[range(trainNum)+blank,:]
 test set = dataset[range(trainNum)+blank+trainNum,:]
 '''
-
 filepath = '/Users/yinboya/STUDY/QuantitativeInvestment/practice1/outdata/'
 list_name = os.listdir(filepath)
 
@@ -184,7 +183,7 @@ def xgb_n_estimators(MAXne = 700, MINne = 20):
     else:
         return(random.randint(101,MAXne))
 
-def trainsetNum(MAXnm = 5000, MINnm = 200):
+def trainsetNum(MAXnm = 14000, MINnm = 14000):
     return(random.randint(MINnm, MAXnm))
 
 # register xgb parameters
@@ -285,11 +284,12 @@ def XGB_reg_evaluation(individual, evaluation_method = 'roll_win'):
     
     if evaluation_method == 'roll_win':
         trainNumber = individual[6] # the train num
-        param = {'eta' : individual[0],
-                 'silent' : True, 'objective' : "reg:linear", 'nthread' : -1,
+        param = {'silent' : True, 'objective' : "reg:linear", 
                  'min_child_weight' : individual[1],'max_depth' : individual[2],
                  'subsample' : individual[3], 'colsample_bylevel' : individual[4],
                  'seed' : 0}
+        if using_gpu == 1:
+            param['updater'] = 'grow_gpu' #using gpu
         roll_win_mseValue = 0
         for i in xrange(N_validation):
             trainingX, trainingY = trainX[(trainNum - (i + 1) * window - trainNumber):(trainNum - (i + 1) * window),:],\
@@ -298,7 +298,8 @@ def XGB_reg_evaluation(individual, evaluation_method = 'roll_win'):
             testingX, testingY= trainX[(trainNum - (i + 1) * window):(trainNum - i * window),:], \
                                        trainY[(trainNum - (i + 1) * window):(trainNum - i * window)]
             dtrain = xgb.DMatrix(data= trainingX, label = trainingY)
-            bst = xgb.train(params = param, dtrain = dtrain, num_boost_round = individual[5])
+            bst = xgb.train(params = param, dtrain = dtrain, 
+                            num_boost_round = individual[5], learning_rates = individual[0])
             testingX = xgb.DMatrix(testingX)
             roll_win_mseValue += sum((testingY - bst.predict(testingX)) ** 2) / window
         roll_win_mseValue /= N_validation
@@ -423,7 +424,7 @@ if I == 1:
         return(tools.selBest(offspring,1))
             
 else:
-    toolbox.register("evaluate", XGB_reg_evaluation, evaluation_method = "roll_win")
+    toolbox.register("evaluate", XGB_reg_evaluation, evaluation_method = eva_method)
     def main(NGEN = iter_NGEN, CXPB = iter_CXPB, MUTPB = iter_MUTPB):
         # Creating the Population
         pop = toolbox.population(n=popNum)

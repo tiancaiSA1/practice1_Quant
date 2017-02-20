@@ -2,9 +2,9 @@ trainNum = 25000
 testNum = 500
 blank0 = 0
 -----sym_1.csv-----
------xgboost regression-----
-training set prediction MSE = 305.636548875
-testing set prediction MSE = 1323.62712071
+-----lasso regression-----
+training set prediction MSE = 500.372881957
+testing set prediction MSE = 1076.28469747
 -----linear regression-----
 training set prediction MSE = 520.284727949
 testing set prediction MSE = 1077.61104147
@@ -12,9 +12,9 @@ testing set prediction MSE = 1077.61104147
 testing set Y's var = 1332.59938833
 
 -----sym_10.csv-----
------xgboost regression-----
-training set prediction MSE = 122.700764637
-testing set prediction MSE = 617.061014299
+-----lasso regression-----
+training set prediction MSE = 528.020152752
+testing set prediction MSE = 585.545580751
 -----linear regression-----
 training set prediction MSE = 551.052722992
 testing set prediction MSE = 582.013831595
@@ -22,9 +22,9 @@ testing set prediction MSE = 582.013831595
 testing set Y's var = 672.007872448
 
 -----sym_100.csv-----
------xgboost regression-----
-training set prediction MSE = 703.700843878
-testing set prediction MSE = 1047.47301393
+-----lasso regression-----
+training set prediction MSE = 868.797336349
+testing set prediction MSE = 750.246497812
 -----linear regression-----
 training set prediction MSE = 908.902142723
 testing set prediction MSE = 746.045241125
@@ -32,9 +32,9 @@ testing set prediction MSE = 746.045241125
 testing set Y's var = 1102.36196706
 
 -----sym_11.csv-----
------xgboost regression-----
-training set prediction MSE = 72.3377669423
-testing set prediction MSE = 945.271090503
+-----lasso regression-----
+training set prediction MSE = 981.644307973
+testing set prediction MSE = 740.437579756
 -----linear regression-----
 training set prediction MSE = 1017.51244933
 testing set prediction MSE = 740.1522589
@@ -42,9 +42,9 @@ testing set prediction MSE = 740.1522589
 testing set Y's var = 1005.04592256
 
 -----sym_12.csv-----
------xgboost regression-----
-training set prediction MSE = 358.381382969
-testing set prediction MSE = 940.471147155
+-----lasso regression-----
+training set prediction MSE = 700.940629513
+testing set prediction MSE = 740.59999812
 -----linear regression-----
 training set prediction MSE = 728.52743663
 testing set prediction MSE = 740.258799213
@@ -52,9 +52,9 @@ testing set prediction MSE = 740.258799213
 testing set Y's var = 1013.02036214
 
 -----sym_13.csv-----
------xgboost regression-----
-training set prediction MSE = 351.328897366
-testing set prediction MSE = 453.424000032
+-----lasso regression-----
+training set prediction MSE = 336.364889609
+testing set prediction MSE = 401.983507785
 -----linear regression-----
 training set prediction MSE = 349.616620515
 testing set prediction MSE = 400.618683722
@@ -62,9 +62,9 @@ testing set prediction MSE = 400.618683722
 testing set Y's var = 474.965512292
 
 -----sym_14.csv-----
------xgboost regression-----
-training set prediction MSE = 27.107484965
-testing set prediction MSE = 2075.06763994
+-----lasso regression-----
+training set prediction MSE = 1045.94310703
+testing set prediction MSE = 1622.54053487
 -----linear regression-----
 training set prediction MSE = 1085.260868
 testing set prediction MSE = 1626.31552297
@@ -72,9 +72,9 @@ testing set prediction MSE = 1626.31552297
 testing set Y's var = 2158.5345312
 
 -----sym_15.csv-----
------xgboost regression-----
-training set prediction MSE = 550.342388987
-testing set prediction MSE = 993.102627762
+-----lasso regression-----
+training set prediction MSE = 677.847084631
+testing set prediction MSE = 804.425543822
 -----linear regression-----
 training set prediction MSE = 706.343888249
 testing set prediction MSE = 805.008156963
@@ -82,9 +82,9 @@ testing set prediction MSE = 805.008156963
 testing set Y's var = 997.124089827
 
 -----sym_16.csv-----
------xgboost regression-----
-training set prediction MSE = 811.039371647
-testing set prediction MSE = 1095.05650335
+-----lasso regression-----
+training set prediction MSE = 941.36779327
+testing set prediction MSE = 932.508732385
 -----linear regression-----
 training set prediction MSE = 983.043527655
 testing set prediction MSE = 931.318948173
@@ -92,9 +92,9 @@ testing set prediction MSE = 931.318948173
 testing set Y's var = 1175.9408869
 
 -----sym_17.csv-----
------xgboost regression-----
-training set prediction MSE = 368.066206348
-testing set prediction MSE = 629.423795069
+-----lasso regression-----
+training set prediction MSE = 670.337511523
+testing set prediction MSE = 568.925492514
 -----linear regression-----
 training set prediction MSE = 698.599986721
 testing set prediction MSE = 569.289300823
